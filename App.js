@@ -1,18 +1,17 @@
-import { useEffect, useState } from 'react';
-import PermissionContextProvider from './src/Contexts/PermissionContext';
 import WeatherContextProvider from './src/Contexts/WeatherContext';
 import AppRouter from './src/MainRouter/AppRouter';
 import AuthContextProvider from './src/Contexts/AuthContext';
+import ReminderContextProvider from './src/Contexts/RemindersContext';
 
 function App() {
   return (
-    <PermissionContextProvider>
-      <AuthContextProvider>
-        <WeatherContextProvider>
+    <AuthContextProvider>
+      <WeatherContextProvider>
+        <ReminderContextProvider>
           <AppRouter />
-        </WeatherContextProvider>
-      </AuthContextProvider>
-    </PermissionContextProvider>
+        </ReminderContextProvider>
+      </WeatherContextProvider>
+    </AuthContextProvider>
   );
 }
 

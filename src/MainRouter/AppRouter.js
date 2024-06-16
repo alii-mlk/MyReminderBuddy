@@ -1,45 +1,48 @@
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import {
     ActivityIndicator,
+    Button,
     PermissionsAndroid,
+    Pressable,
     Text,
     View,
 } from 'react-native';
-const Tab = createBottomTabNavigator();
+
+const Stack = createNativeStackNavigator();
 
 import Home from '../Pages/Home';
-import Weather from '../Pages/Weather';
-import CalendarTab from '../Pages/Calendar';
 import { useContext } from 'react';
-import { PermissionContext } from '../Contexts/PermissionContext';
 import { AuthContext } from '../Contexts/AuthContext';
 import Settings from '../Pages/Settings';
 import LoginPage from '../Pages/LoginPage';
+import { WeatherContext } from '../Contexts/WeatherContext';
+import Info from '../Pages/Info';
+import { ReminderContext } from '../Contexts/RemindersContext';
 
 export default function AppRouter() {
-    const { locationAccess, cameraAccess } = useContext(PermissionContext)
     const { userLoading, userLoadingError, userSession } = useContext(AuthContext)
-    // if (cameraAccess == undefined) {
-    //     return <View style={{ display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center", flex: 1 }}>
-    //         <ActivityIndicator />
-    //         <Text>Waiting for camera access.</Text>
-    //     </View>
-    // }
-    // if (cameraAccess == false) {
-    //     return <View style={{ display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center", flex: 1 }}>
-    //         <Text>Please grant camera access to continue.</Text>
-    //     </View >
-    // }
-    // if (!locationAccess) {
-    //     return <View style={{ display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center", flex: 1 }}>
-    //         <Text>Please grant location access to continue.</Text>
-    //     </View >
-    // }
-    // else 
+    const { locationAccess } = useContext(WeatherContext)
+    const { calendarAccess } = useContext(ReminderContext);
+
+    if (!locationAccess) {
+        return <View style={{ display: "flex", justifyContent: 'center', alignItems: "center", flex: 1, padding: "20px" }}>
+            <Ionicons name={'navigate-outline'} size={20} color={"black"} />
+            <Text>We need you to grant location access in order to provide weather information </Text>
+            <Text>Please grant location access in settings and reload the app. </Text>
+        </View>
+    }
+    if (!calendarAccess) {
+        return <View style={{ display: "flex", justifyContent: 'center', alignItems: "center", flex: 1, padding: "20px" }}>
+            <Ionicons name={'calendar-outline'} size={20} color={"black"} />
+            <Text>We need you to grant calendar access in order to syncronize calendar events </Text>
+            <Text>Please grant calendar access in settings and reload the app. </Text>
+        </View>
+    }
 
     if (userLoading) {
         return <View style={{ display: "flex", justifyContent: 'center', alignItems: "center", flex: 1 }}>
@@ -56,38 +59,28 @@ export default function AppRouter() {
         return <LoginPage />
     }
     else return <NavigationContainer>
-        <Tab.Navigator
-            screenOptions={({ route }) => ({
-                tabBarIcon: ({ focused, color, size }) => {
-                    let iconName;
-
-                    if (route.name === 'Home') {
-                        iconName = focused
-                            ? 'home'
-                            : 'home-outline';
-                    } else if (route.name === 'Weather') {
-                        iconName = focused ? 'cloud' : 'cloud-outline';
-                    }
-                    else if (route.name === 'Calendar') {
-                        iconName = focused ? 'calendar' : 'calendar-outline';
-                    }
-                    else {
-                        iconName = focused ? 'settings' : 'settings-outline';
-                    }
-
-                    // You can return any component that you like here!
-                    return <Ionicons name={iconName} size={size} color={color} />;
-                },
-                tabBarActiveTintColor: 'black',
-                tabBarInactiveTintColor: 'black',
-            })}
-        >
-
-            <Tab.Screen name="Home" component={Home} />
-            <Tab.Screen name="Weather" component={Weather} />
-            <Tab.Screen name="Calendar" component={CalendarTab} />
-            <Tab.Screen name="Settings" component={Settings} />
-        </Tab.Navigator>
+        <Stack.Navigator>
+            <Stack.Screen name="Home" component={Home}
+                options={({ navigation, route }) => ({
+                    headerRight: () => (
+                        <>
+                            <Pressable
+                                onPress={() => navigation.push('Settings')}
+                            >
+                                <Ionicons name={"settings"} size={20} color={"black"} />
+                            </Pressable>
+                            <Pressable
+                                onPress={() => navigation.push('Info')}
+                            >
+                                <Ionicons name={"information-circle"} size={20} color={"black"} />
+                            </Pressable>
+                        </>
+                    ),
+                })}
+            />
+            <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="Info" component={Info} />
+        </Stack.Navigator>
     </NavigationContainer>
 
 }

@@ -27,3 +27,18 @@ export const formatTime = (secs) => {
 export const kelvinToCelius = (degree) => {
     return degree - 273
 }
+
+export const handleChange = (name, value, state, setState) => {
+    let _state = { ...state }
+    _state[name] = value
+    setState(_state)
+}
+export const emtptyReminderTemplate = {
+    title: "",
+    isDailyReminder: false,
+    // date: new Date(),
+    // isAllDay: false,
+    startTime: new Date(),
+    endTime: new Date(),
+    isChecked: false
+}

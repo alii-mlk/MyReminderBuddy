@@ -24,6 +24,7 @@ const AuthContextProvider = (props) => {
   const [userLoading, setUserLoading] = useState(true)
   const [userLoadingError, setUserLoadingError] = useState(undefined)
   const [userSession, setUserSession] = useState(undefined)
+  const [loginType, setLoginType] = useState(undefined)
   useEffect(() => {
     retrieveUserSession()
   }, [])
@@ -39,7 +40,6 @@ const AuthContextProvider = (props) => {
         setUserLoading(false)
       }
     } catch (error) {
-      console.log(error)
       setUserSession(undefined)
       setUserLoadingError("Failed to load user")
       setUserLoading(false)
@@ -50,8 +50,8 @@ const AuthContextProvider = (props) => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log(userInfo)
       setUserSession({ userInfo });
+      setLoginType("google")
     } catch (error) {
       console.log(error)
       if (isErrorWithCode(error)) {
@@ -65,9 +65,6 @@ const AuthContextProvider = (props) => {
             break;
           case statusCodes.ONE_TAP_START_FAILED:
             console.log("ONE_TAP_START_FAILED")
-            // Android and Web only, you probably have hit rate limiting.
-            // On Android, you can still call `presentExplicitSignIn` in this case.
-            // On the web, user needs to click the `WebGoogleSigninButton` to sign in.
             break;
           case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
             console.log("PLAY_SERVICES_NOT_AVAILABLE")
@@ -84,11 +81,12 @@ const AuthContextProvider = (props) => {
   };
   const offlineSignIn = () => {
     setUserSession({ username: "Offline User" });
+    setLoginType("offline")
     setUserLoading(false)
   }
 
   return (
-    <AuthContext.Provider value={{ userSession, userLoading, userLoadingError, handleGoogleSignIn, offlineSignIn }}>
+    <AuthContext.Provider value={{ userSession, userLoading, userLoadingError, handleGoogleSignIn, offlineSignIn, loginType, setLoginType }}>
       {props.children}
     </AuthContext.Provider>
   )
