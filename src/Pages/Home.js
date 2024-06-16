@@ -110,8 +110,9 @@ export default function Home({ navigation }) {
           width: '100%',
           height: '100%',
           backgroundColor: isPortrait ? 'rgba(255, 255, 255,0.8)' : 'rgba(255, 255, 255,0.8)',
+          
         }}>
-          <ScrollView style={{ width: "100%", height: "100%" }}>
+          <ScrollView style={{ width: "100%" }}>
             <View style={{ flex: 1, width: "100%" }} >
               <View style={{ display: "flex", padding: 4, flex: 1, gap: 2, justifyContent: "center", alignItems: 'center', width: "100%" }}>
                 <Text style={{ alignSelf: "center", color: "black" }}>Today reminders:</Text>
