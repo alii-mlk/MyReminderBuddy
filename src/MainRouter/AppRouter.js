@@ -23,6 +23,7 @@ import LoginPage from '../Pages/LoginPage';
 import { WeatherContext } from '../Contexts/WeatherContext';
 import Info from '../Pages/Info';
 import { ReminderContext } from '../Contexts/RemindersContext';
+import RemindersList from '../Pages/RemindersList';
 
 export default function AppRouter() {
     const { userLoading, userLoadingError, userSession } = useContext(AuthContext)
@@ -80,6 +81,7 @@ export default function AppRouter() {
             />
             <Stack.Screen name="Settings" component={Settings} />
             <Stack.Screen name="Info" component={Info} />
+            <Stack.Screen name="RemindersList" component={RemindersList} />
         </Stack.Navigator>
     </NavigationContainer>
 

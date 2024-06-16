@@ -40,7 +40,7 @@ const ReminderContextProvider = (props) => {
     //this is a hook that when any reminder changes it syncs reminders on device localstorage including fetching reminders from google calendar
     useEffect(() => {
         if (!reminders) return
-        if (reminders.length !== 0) syncLocalStorage()
+        syncLocalStorage()
     }, [reminders])
 
     useEffect(() => {
@@ -52,7 +52,7 @@ const ReminderContextProvider = (props) => {
         // Clear interval on component unmount
         return () => clearInterval(intervalId);
     }, []);
-    
+
     const getCalendarPermission = async () => {
         try {
             const writePermission = await PermissionsAndroid.request(
@@ -104,6 +104,7 @@ const ReminderContextProvider = (props) => {
                     adaptedReminder.title = reminder.title;
                     adaptedReminder.startTime = new Date(reminder.startTime);
                     adaptedReminder.endTime = new Date(reminder.endTime);
+                    adaptedReminder.isDailyReminder=reminder.isDailyReminder
                     localRemindersArray.push(adaptedReminder);
                 });
             } else {
@@ -197,7 +198,9 @@ const ReminderContextProvider = (props) => {
                 let response = await RNCalendarEvents.removeCalendar(reminder.id);
                 console.log(response)
             }
-            setReminders(reminders.filter(
+            if (reminders.length == 1) {
+                setReminders([])
+            } else setReminders(reminders.filter(
                 (rem) => !(rem.title === reminder.title && rem.startTime.toISOString() === reminder.startTime.toISOString())
             ));
         }
